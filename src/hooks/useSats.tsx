@@ -1,166 +1,74 @@
-import { GroundPolylineGeometry } from "cesium";
+import { useMemo } from "react";
+import { Axios } from "axios";
+import { SAT_CATEGORIES } from "../constants/groupDefs";
+import { Elements, parse_sat } from "satellite-rs";
+import { chunk } from "lodash";
 
-export default function useSats() {}
+export default function useSats() {
+  useMemo(getAllSats, []);
+}
 
-type SatteliteCategories = {
-  specialInterest: Array<SatelliteGroup>;
-  weatherAndEarthResources: Array<SatelliteGroup>;
-  communications: Array<SatelliteGroup>;
-  navigation: Array<SatelliteGroup>;
-  scientific: Array<SatelliteGroup>;
-  miscellaneous: Array<SatelliteGroup>;
-};
+async function getAllSats() {
+  const FORMAT = "tle";
 
-type SatelliteGroup = { name: string; group: string };
-
-const SAT_CATEGORIES: SatteliteCategories = {
-  specialInterest: [
-    {
-      name: "Last 30 Days' Launches",
-      group: "last-30-days",
+  const client = new Axios({
+    baseURL: "https://celestrak.org/NORAD/elements/gp.php",
+    params: {
+      FORMAT,
     },
-    { name: "Space Stations", group: "stations" },
-    { name: "100 (or so) Brightest", group: "visual" },
-    { name: "Active Satellites", group: "active" },
-    { name: "Analyst Satellites", group: "analyst" },
-    { name: "Russian ASAT Test Debris (COSMOS 1408)", group: "1982-092" },
-    { name: "Chinese ASAT Test Debris (FENGYUN 1C", group: "1999-025" },
-    { name: "IRIDIUM 33 Debris", group: "iridium-33-debris" },
-    { name: "COSMOS 2251 Debris", group: "cosmos-2251-debris" },
-  ],
-  weatherAndEarthResources: [
-    { name: "Weather", group: "weather" },
-    { name: "NOAA", group: "noaa" },
-    { name: "GOES", group: "goes" },
-    { name: "Earth Resources", group: "resource" },
-    { name: "Search & Rescue (SARSAT)", group: "sarsat" },
-    { name: "Disaster Monitoring", group: "dmc" },
-    {
-      name: "Tracking and Data Relay Satellite System (TDRSS)",
-      group: "tdrss",
-    },
-    { name: "ARGOS Data Collection System", group: "argos" },
-    { name: "Planet", group: "planet" },
-    { name: "Spire", group: "spire" },
-  ],
-  communications: [
-    { name: "Active Geosynchronous", group: "geo" },
-    { name: "GEO Protected Zone", group: "gpz" },
-    { name: "GEO Protected Zone Plus", group: "gpz-plus" },
-    { name: "Intelsat", group: "intelsat" },
-    { name: "SES", group: "ses" },
-    { name: "Iridium", group: "iridium" },
-    { name: "Iridium NEXT", group: "iridium-NEXT" },
-    { name: "Starlink", group: "starlink" },
-    { name: "OneWeb", group: "oneweb" },
-    { name: "Orbcomm", group: "orbcomm" },
-    { name: "Globalstar", group: "globalstar" },
-    { name: "Swarm", group: "swarm" },
-    { name: "Amateur Radio", group: "amateur" },
-    { name: "Experimental Comm", group: "x-comm" },
-    { name: "Other Comm", group: "other-comm" },
-    { name: "SatNOGS", group: "satnogs" },
-    { name: "Gorizont", group: "gorizont" },
-    { name: "Raduga", group: "raduga" },
-    { name: "Molniya", group: "molniya" },
-  ],
-  navigation: [
-    { name: "GNSS", group: "gnss" },
-    { name: "GPS Operational", group: "gps-ops" },
-    { name: "GLONASS Operational", group: "glo-ops" },
-    { name: "Galileo", group: "galileo" },
-    { name: "Beidou", group: "beidou" },
-    {
-      name: "Satellite-Based Augmentation System (WAAS/EGNOS/MSAS}",
-      group: "sbas",
-    },
-    { name: "Navy Navigation Satellite System (NNSS)", group: "nnss" },
-    { name: "Russion LEO Navigation", group: "musson" },
-  ],
-  scientific: [
-    { name: "Space & Earth Science", group: "science" },
-    { name: "Geodetic", group: "geodetic" },
-    { name: "Engineering", group: "engineering" },
-    { name: "Education", group: "education" },
-  ],
-  miscellaneous: [
-    { name: "Miscellaneous Military", group: "military" },
-    { name: "Radar Calibration", group: "radar" },
-    { name: "CubeSats", group: "cubesat" },
-    { name: "Other Satellites", group: "other" },
-  ],
-};
+  });
 
-/// SPECIAL INTEREST
-//last-30-days
-//stations
-//visual
-//active
-//analyst
-//1982-092
-//1999-025
-//iridium-33-debris
-//cosmos-2251-debris
+  let categories: Record<string, Elements[]> = {};
 
-/**/
+  // Split satellites by group
+  let handle = Object.entries(SAT_CATEGORIES).map(
+    async ([name, satelliteGroup]) => {
+      let handle = satelliteGroup.map(async (group) => {
+        try {
+          // get raw tle data
+          let response: { data: string } = await client.get("", {
+            params: { GROUP: group.group },
+          });
 
-/// Weather & Earth Resources
-//weather
-//noaa
-//goes
-//resource
-//sarsat
-//dmc
-//tdrss
-//argos
-//planet
-//spire
+          // split data by new lines
+          let lines = response.data.split("\n");
 
-/***/
+          console.time(group.name);
+          
+          // chunk the lines in groups of three and then join them again using newlines
+          let elements = chunk(lines, 3)
+            .map((lines) => lines.join("\n"))
+            .filter((tle) => tle != "")
+            .map((tle) => {
+              try {
+                return parse_sat(tle);
+              } catch (e) {
+                console.error(`Couldn't parse the following TLE:
+              ${tle}`);
+              }
+            });
 
-/// Communications
-//geo
-//gpz
-//gpz-plus
-//intelsat
-//ses
-//iridium
-//iridium-NEXT
-//starlink
-//oneweb
-//orbcomm
-//globalstar
-//swarm
-//amateur
-//x-comm
-//other-comm
-//satnogs
-//gorizont
-//raduga
-//molniya
+          console.timeEnd(group.name);
 
-/** */
+          // If this category has already been accounted for, append to it. otherwise, set categories[name] to current elements
+          if (categories[name]) {
+            categories[name].concat(elements);
+          } else {
+            categories[name] = elements;
+          }
 
-/// Navigation
-//gnss
-//gps-ops
-//glo-ops
-//galileo
-//beidou
-//sbas
-//nnss
-//musson
+          // group.name will always be unique
+          categories[group.name] = elements;
+        } catch (e) {
+          console.error(`Couldn't fetch satellite group ${group.name}`, e);
+        }
+      });
 
-/** */
+      await Promise.all(handle);
+    }
+  );
 
-/// Scientific Satellites
-//science
-//geodetic
-//engineering
-//education
+  await Promise.all(handle);
 
-/// Miscellaneous
-//military
-//radar
-//cubesat
-//other
+  console.log(categories);
+}
