@@ -7,3 +7,4 @@ pub mod julianDate;
 pub mod dataSourceClock;
 pub mod event;
 pub mod entity_cluster;
+pub mod entity_collection;
