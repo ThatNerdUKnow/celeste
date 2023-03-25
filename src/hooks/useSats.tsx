@@ -1,14 +1,18 @@
-import { useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Axios } from "axios";
 import { SAT_CATEGORIES } from "../constants/groupDefs";
 import { Elements, parse_sat } from "satellite-rs";
 import { chunk } from "lodash";
 
 export default function useSats() {
-  useMemo(getAllSats, []);
+  let [sats,setSats] = useState({});
+  useEffect(() => {
+    getAllSats(setSats);
+  }, []);
+  return sats;
 }
 
-async function getAllSats() {
+async function getAllSats(setter: Dispatch<SetStateAction<{}>>) {
   const FORMAT = "tle";
 
   const client = new Axios({
@@ -34,7 +38,7 @@ async function getAllSats() {
           let lines = response.data.split("\n");
 
           console.time(group.name);
-          
+
           // chunk the lines in groups of three and then join them again using newlines
           let elements = chunk(lines, 3)
             .map((lines) => lines.join("\n"))
@@ -71,4 +75,6 @@ async function getAllSats() {
   await Promise.all(handle);
 
   console.log(categories);
+
+  setter(categories)
 }
