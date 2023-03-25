@@ -5,7 +5,7 @@ use std::collections::HashSet;
 
 use crate::error::{Error, WrapSgp4Error};
 
-use super::{cartesian3::Cartesian3, entity::Entity, julianDate::JulianDate};
+use super::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate};
 
 pub struct Satellite {
     entity: Entity,
