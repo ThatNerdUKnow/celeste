@@ -5,7 +5,7 @@ use std::collections::HashSet;
 
 use crate::error::{Error, WrapSgp4Error};
 
-use super::{entity::Entity, julianDate::JulianDate};
+use super::{cartesian3::Cartesian3, entity::Entity, julianDate::JulianDate};
 
 pub struct Satellite {
     entity: Entity,
@@ -39,8 +39,8 @@ impl Satellite {
     }
 
     /// Propogate satellite's position given [`JulianDate`] from cesium
-    pub fn propogate(&self, date: JulianDate) -> error_stack::Result<Prediction, Error> {
-        let iso8601 = JulianDate::toIso8601(&date);
+    pub fn propogate(&self, date: &JulianDate) -> error_stack::Result<Prediction, Error> {
+        let iso8601 = JulianDate::toIso8601(date);
 
         let date = NaiveDateTime::parse_from_str(&iso8601, "%Y-%m-%dT%H:%M:%SZ")
             .into_report()
@@ -56,5 +56,13 @@ impl Satellite {
             .propagate(minutes)
             .to_sgp4_report()
             .change_context(Error::Propogate)
+    }
+
+    pub fn update_entity(&self, prediction: Prediction) {
+        let [x, y, z] = prediction.position;
+
+        let coords = Cartesian3::fromElements(x, y, z);
+
+        self.entity.set_position(coords);
     }
 }

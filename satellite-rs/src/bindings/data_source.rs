@@ -1,6 +1,9 @@
+use log::error;
 use wasm_bindgen::prelude::*;
 
 use crate::bindings::julianDate::JulianDate;
+
+use super::satellite::Satellite;
 
 #[wasm_bindgen(module = "cesium")]
 extern "C" {
@@ -16,7 +19,7 @@ extern "C" {
 
 #[wasm_bindgen]
 pub struct SatelliteDataSource {
-    //raw_entities: Vec<(sgp4::Elements, Entity)>,
+    satellites: Vec<Satellite>,
     changedEvent: Event,
     clock: DataSourceClock,
     clustering: EntityCluster,
@@ -36,7 +39,14 @@ impl SatelliteDataSource {
         todo!()
     }
 
-    pub fn update(time: JulianDate) -> bool {
+    #[wasm_bindgen(method)]
+    pub fn update(&self, time: JulianDate) -> bool {
+        for satellite in &self.satellites {
+            match satellite.propogate(&time){
+                Ok(prediction) => todo!(),
+                Err(e) => error!("{e}")
+            }
+        }
         true
     }
 }

@@ -28,6 +28,8 @@ js-sys = "0.3.61"
 chrono = "0.4.24"
 thiserror = "1.0.40"
 error-stack = "0.3.1"
+log = "0.4.17"
+wasm-logger = "0.2.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"
