@@ -1,3 +1,4 @@
+use error_stack::IntoReport;
 use thiserror::Error;
 use wasm_bindgen::prelude::*;
 
@@ -18,12 +19,11 @@ pub trait WrapSgp4Error<T> {
 
 impl<T> WrapSgp4Error<T> for Result<T, sgp4::Error> {
     fn to_sgp4_report(self) -> error_stack::Result<T, Sgp4Error> {
-        let foo = self.map_err(|e| {
+        self.map_err(|e| {
             let binding: Sgp4Error = e.into();
             binding
-        })?;
-
-        todo!()
+        })
+        .into_report()
     }
 }
 
