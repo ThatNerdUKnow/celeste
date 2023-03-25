@@ -1,17 +1,20 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { Axios } from "axios";
 import { SAT_CATEGORIES } from "../constants/groupDefs";
-import { Elements, parse_sat } from "satellite-rs";
+import { SatelliteDataSource } from "satellite-rs";
 import { chunk } from "lodash";
 
 export default function useSats() {
-  let [sats,setSats] = useState({});
+  let [sats, setSats] = useState({});
   useEffect(() => {
-    getAllSats(setSats);
+    //getAllSats(setSats);
   }, []);
+  let foo = new SatelliteDataSource();
+  console.log(foo);
   return sats;
 }
 
+/*
 async function getAllSats(setter: Dispatch<SetStateAction<{}>>) {
   const FORMAT = "tle";
 
@@ -22,7 +25,7 @@ async function getAllSats(setter: Dispatch<SetStateAction<{}>>) {
     },
   });
 
-  let categories: Record<string, Elements[]> = {};
+ // let categories: Record<string, Elements[]> = {};
 
   // Split satellites by group
   let handle = Object.entries(SAT_CATEGORIES).map(
@@ -45,7 +48,7 @@ async function getAllSats(setter: Dispatch<SetStateAction<{}>>) {
             .filter((tle) => tle != "")
             .map((tle) => {
               try {
-                return parse_sat(tle);
+                //return parse_sat(tle);
               } catch (e) {
                 console.error(`Couldn't parse the following TLE:
               ${tle}`);
@@ -76,5 +79,6 @@ async function getAllSats(setter: Dispatch<SetStateAction<{}>>) {
 
   console.log(categories);
 
-  setter(categories)
+  setter(categories);
 }
+*/

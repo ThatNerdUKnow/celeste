@@ -60,6 +60,57 @@ impl SatelliteDataSource {
     pub async fn load_data(&mut self) {
         todo!()
     }
+
+    #[wasm_bindgen(getter)]
+    pub fn changedEvent(&self) -> JsValue {
+        self.changed_event.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn clock(&self) -> JsValue {
+        self.clock.clone()
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_clock(&mut self, clock: DataSourceClock) {
+        self.clock = clock
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn clustering(&self) -> JsValue {
+        self.clustering.clone()
+    }
+
+    #[wasm_bindgen(setter)]
+    pub fn set_clustering(&mut self, clustering: EntityCluster) {
+        self.clustering = clustering
+    }
+
+    /// This will likely be slow
+    #[wasm_bindgen(getter)]
+    pub fn entities(&self) -> JsValue {
+        self.entities.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn errorEvent(&self) -> JsValue {
+        self.error_event.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn isLoading(&self) -> bool {
+        self.is_loading
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    #[wasm_bindgen(getter)]
+    pub fn show(&self) -> bool {
+        self.show
+    }
 }
 
 impl Default for SatelliteDataSource {

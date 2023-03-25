@@ -1,5 +1,5 @@
 import { SatelliteCategories } from "../types/categories";
-import { parse_sat } from "satellite-rs";
+//import { parse_sat } from "satellite-rs";
 
 export const SAT_CATEGORIES: SatelliteCategories = {
   specialInterest: [
