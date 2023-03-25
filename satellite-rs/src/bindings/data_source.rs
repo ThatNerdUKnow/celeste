@@ -10,7 +10,7 @@ use super::{
 
 #[wasm_bindgen]
 pub struct SatelliteDataSource {
-    satellites: Vec<Satellite>,
+    satellites: Option<Vec<Satellite>>,
     changed_event: Event,
     clock: DataSourceClock,
     clustering: EntityCluster,
@@ -26,10 +26,8 @@ pub struct SatelliteDataSource {
 impl SatelliteDataSource {
     #[wasm_bindgen(constructor)]
     pub fn new() -> SatelliteDataSource {
-        let sats = SatelliteDataSource::get_sats();
-
         SatelliteDataSource {
-            satellites: sats,
+            satellites: None,
             changed_event: Event::new(),
             clock: DataSourceClock::new(),
             clustering: EntityCluster::new(),
@@ -44,24 +42,28 @@ impl SatelliteDataSource {
 
     #[wasm_bindgen]
     pub fn update(&self, time: JulianDate) -> bool {
-        for satellite in &self.satellites {
-            match satellite.propogate(&time) {
-                Ok(prediction) => satellite.update_entity(prediction),
-                Err(e) => error!("{e}"),
+        match &self.satellites {
+            Some(satellites) => {
+                for satellite in satellites {
+                    match satellite.propogate(&time) {
+                        Ok(prediction) => satellite.update_entity(prediction),
+                        Err(e) => error!("{e}"),
+                    }
+                }
+                true
             }
+            None => false,
         }
-        true
+    }
+
+    #[wasm_bindgen]
+    pub async fn load_data(&mut self) {
+        todo!()
     }
 }
 
 impl Default for SatelliteDataSource {
     fn default() -> Self {
         SatelliteDataSource::new()
-    }
-}
-
-impl SatelliteDataSource {
-    fn get_sats() -> Vec<Satellite> {
-        todo!()
     }
 }
