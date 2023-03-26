@@ -43,6 +43,8 @@ impl SatelliteDataSource {
     #[wasm_bindgen]
     pub fn update(&self, time: JulianDate) -> bool {
         debug!("Update called");
+        trace!("Current Clock: {}", JulianDate::toIso8601(&time));
+
         match &self.satellites {
             Some(satellites) => {
                 for satellite in satellites {

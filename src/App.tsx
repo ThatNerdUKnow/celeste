@@ -1,9 +1,16 @@
-import { CustomDataSource, Viewer } from "resium";
+import { ShadowMode } from "cesium";
+import { CustomDataSource, Moon, Sun, Viewer } from "resium";
 import SatelliteData from "./components/satellites";
 function App() {
   return (
-    <Viewer>
+    <Viewer
+      terrainShadows={ShadowMode.ENABLED}
+      showRenderLoopErrors={true}
+      shadows={true}
+    >
       <SatelliteData />
+      <Moon />
+      <Sun />
     </Viewer>
   );
 }
