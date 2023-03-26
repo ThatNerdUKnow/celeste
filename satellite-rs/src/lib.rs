@@ -2,6 +2,7 @@ pub mod bindings;
 mod data_source;
 pub mod error;
 mod utils;
+pub mod data;
 
 use log::info;
 use wasm_bindgen::prelude::*;
