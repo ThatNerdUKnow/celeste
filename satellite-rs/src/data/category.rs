@@ -7,3 +7,9 @@ pub struct Category {
     pub(super) name: &'static str,
     pub(super) groups: BTreeSet<Group>,
 }
+
+impl Category {
+    pub fn groups(&self) -> &BTreeSet<Group> {
+        &self.groups
+    }
+}

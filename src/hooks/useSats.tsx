@@ -11,8 +11,13 @@ export default function useSats() {
   let satellites = useMemo(() => {
     let sats = new SatelliteDataSource();
     console.log("Within Hook", sats);
-    //sats.add_data();
-    viewer?.dataSources.add(sats);
+    sats
+      .load_data()
+      .then(() => {
+        console.log("Loaded Data");
+        viewer?.dataSources.add(sats);
+      });
+
     return sats;
   }, []);
 
