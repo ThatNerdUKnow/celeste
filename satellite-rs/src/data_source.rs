@@ -1,11 +1,10 @@
 use log::{debug, error, info, trace};
 use wasm_bindgen::prelude::*;
 
-use crate::bindings::julian_date::JulianDate;
-
-use super::{
+use crate::bindings::{
     data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
-    entity_collection::EntityCollection, event::Event, satellite::Satellite,
+    entity_collection::EntityCollection, event::Event, julian_date::JulianDate,
+    satellite::Satellite,
 };
 
 #[wasm_bindgen]
