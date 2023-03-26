@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
 use error_stack::{IntoReport, ResultExt};
-use log::info;
+use log::debug;
 use sgp4::{Elements, Prediction};
 use std::collections::HashSet;
 
@@ -17,7 +17,7 @@ pub struct Satellite {
 
 impl Satellite {
     pub fn new(tle: &str, categories: HashSet<String>) -> Result<Satellite, sgp4::Error> {
-        info!("Creating new Satellite Data Source");
+        debug!("Creating new Satellite Data Source");
         let ent = Entity::new();
 
         let lines: Vec<&str> = tle.split('\n').collect();

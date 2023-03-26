@@ -1,10 +1,11 @@
-import {Viewer} from 'resium';
-import useSats from './hooks/useSats';
+import { CustomDataSource, Viewer } from "resium";
+import SatelliteData from "./components/satellites";
 function App() {
-  useSats();
   return (
-    <Viewer/>
-  )
+    <Viewer>
+      <SatelliteData />
+    </Viewer>
+  );
 }
 
-export default App
+export default App;

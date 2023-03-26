@@ -3,15 +3,20 @@ import { Axios } from "axios";
 import { SAT_CATEGORIES } from "../constants/groupDefs";
 import { SatelliteDataSource } from "satellite-rs";
 import { chunk } from "lodash";
+import { useCesium } from "resium";
 
 export default function useSats() {
-  let [sats, setSats] = useState({});
-  useEffect(() => {
-    //getAllSats(setSats);
+  let { viewer } = useCesium();
+
+  let satellites = useMemo(() => {
+    let sats = new SatelliteDataSource();
+    console.log("Within Hook", sats);
+    //sats.add_data();
+    viewer?.dataSources.add(sats);
+    return sats;
   }, []);
-  let foo = new SatelliteDataSource();
-  console.log(foo);
-  return sats;
+
+  return satellites;
 }
 
 /*
