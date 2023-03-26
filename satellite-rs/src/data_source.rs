@@ -1,11 +1,10 @@
 use log::{debug, error, info, trace};
 use wasm_bindgen::prelude::*;
 
-use crate::bindings::{
+use crate::{bindings::{
     data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
     entity_collection::EntityCollection, event::Event, julian_date::JulianDate,
-    satellite::Satellite,
-};
+}, satellite::Satellite};
 
 #[wasm_bindgen]
 pub struct SatelliteDataSource {

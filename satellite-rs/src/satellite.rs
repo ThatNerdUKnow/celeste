@@ -4,9 +4,7 @@ use log::debug;
 use sgp4::{Elements, Prediction};
 use std::collections::HashSet;
 
-use crate::error::{Error, WrapSgp4Error};
-
-use super::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate};
+use crate::{error::{Error, WrapSgp4Error}, bindings::{entity::Entity, cartesian3::Cartesian3, julian_date::JulianDate}};
 
 pub struct Satellite {
     entity: Entity,

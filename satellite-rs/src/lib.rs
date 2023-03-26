@@ -1,8 +1,9 @@
 pub mod bindings;
+pub mod data;
 mod data_source;
 pub mod error;
+mod satellite;
 mod utils;
-pub mod data;
 
 use log::info;
 use wasm_bindgen::prelude::*;

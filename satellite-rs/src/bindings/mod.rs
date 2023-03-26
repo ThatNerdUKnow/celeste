@@ -1,6 +1,5 @@
 pub mod entity;
 pub mod cartesian3;
-pub mod satellite;
 pub mod julian_date;
 pub mod data_source_clock;
 pub mod event;
