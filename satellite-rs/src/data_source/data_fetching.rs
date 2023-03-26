@@ -83,9 +83,10 @@ impl SatelliteDataSource {
                 .await
                 .into_report()
                 .change_context(Error::GetSats)
-                .inspect(|_| info!("Loaded TLE data for {name}"))
+                .inspect(|_| info!("Loaded TLE data for group {name}"))
                 .expect_throw(&format!("Couldn't get body data for group {name}"))
                 .split("\r\n")
+                .map(|line| line.trim())
                 .chunks(3)
                 .into_iter()
                 .map(|chunk| chunk.take(3).collect())

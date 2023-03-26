@@ -29,7 +29,6 @@ impl Eq for ElementsAdapter {}
 
 impl From<Elements> for ElementsAdapter {
     fn from(value: Elements) -> Self {
-        trace!("Wrapping Element {:#?}", value.object_name);
         ElementsAdapter(value)
     }
 }
