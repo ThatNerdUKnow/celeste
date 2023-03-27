@@ -1,7 +1,6 @@
 use std::collections::HashSet;
 
 use log::{debug, error, info, trace};
-use reqwest_wasm::Client;
 use wasm_bindgen::prelude::*;
 
 pub mod data_fetching;

@@ -1,7 +1,7 @@
 use error_stack::IntoReport;
-use thiserror::Error;
-use wasm_bindgen::{__rt::IntoJsResult, prelude::*};
 use log::error;
+use thiserror::Error;
+use wasm_bindgen::prelude::*;
 
 pub mod adapter;
 

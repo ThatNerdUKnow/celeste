@@ -2,7 +2,7 @@ use chrono::NaiveDateTime;
 use error_stack::{IntoReport, ResultExt};
 use log::debug;
 use sgp4::{Elements, Prediction};
-use std::collections::{BTreeSet, HashSet};
+use std::collections::BTreeSet;
 use std::hash::Hash;
 
 use crate::{

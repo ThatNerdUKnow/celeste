@@ -21,9 +21,9 @@ impl PartialEq for ElementsAdapter {
     }
 }
 
-impl Into<Elements> for ElementsAdapter {
-    fn into(self) -> Elements {
-        self.0
+impl From<ElementsAdapter> for Elements {
+    fn from(val: ElementsAdapter) -> Self {
+        val.0
     }
 }
 
