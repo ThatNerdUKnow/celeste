@@ -3,6 +3,8 @@ use thiserror::Error;
 use wasm_bindgen::{__rt::IntoJsResult, prelude::*};
 use log::error;
 
+pub mod adapter;
+
 #[wasm_bindgen]
 #[derive(Error, Debug)]
 #[error("{0:?}")]

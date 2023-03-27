@@ -2,37 +2,56 @@ use chrono::NaiveDateTime;
 use error_stack::{IntoReport, ResultExt};
 use log::debug;
 use sgp4::{Elements, Prediction};
-use std::collections::HashSet;
+use std::collections::{BTreeSet, HashSet};
+use std::hash::Hash;
 
-use crate::{error::{Error, WrapSgp4Error}, bindings::{entity::Entity, cartesian3::Cartesian3, julian_date::JulianDate}};
+use crate::{
+    bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
+    data::group::Group,
+    data_source::data_fetching::adapter::ElementsAdapter,
+    error::{Error, WrapSgp4Error},
+};
 
 pub struct Satellite {
     entity: Entity,
-    elements: Elements,
+    elements: ElementsAdapter,
     constants: sgp4::Constants,
-    categories: HashSet<String>,
+    categories: BTreeSet<&'static Group>,
 }
 
+impl Hash for Satellite {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        //self.entity.hash(state);
+        self.elements.hash(state);
+        //self.constants.hash(state);
+        self.categories.hash(state);
+    }
+}
+
+impl PartialEq for Satellite {
+    fn eq(&self, other: &Self) -> bool {
+        self.elements == other.elements && self.categories == other.categories
+    }
+}
+
+impl Eq for Satellite {}
+
 impl Satellite {
-    pub fn new(tle: &str, categories: HashSet<String>) -> Result<Satellite, sgp4::Error> {
+    pub fn new(
+        elements: Elements,
+        categories: BTreeSet<&'static Group>,
+    ) -> error_stack::Result<Satellite, Error> {
         debug!("Creating new Satellite Data Source");
         let ent = Entity::new();
 
-        let lines: Vec<&str> = tle.split('\n').collect();
-
-        assert_eq!(lines.len(), 3);
-
-        let elements = Elements::from_tle(
-            Some(lines[0].to_owned()),
-            lines[1].as_bytes(),
-            lines[2].as_bytes(),
-        )?;
-
-        let constants = sgp4::Constants::from_elements(&elements)?;
+        let constants = sgp4::Constants::from_elements(&elements)
+            .to_sgp4_report()
+            .attach_printable("Creating constants for satellite")
+            .change_context(Error::GetSats)?;
 
         Ok(Satellite {
             entity: ent,
-            elements,
+            elements: elements.into(),
             constants,
             categories,
         })
@@ -48,6 +67,7 @@ impl Satellite {
 
         let minutes = self
             .elements
+            .as_ref()
             .minutes_since_epoch(&date)
             .to_sgp4_report()
             .change_context(Error::Propogate)?;

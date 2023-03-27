@@ -4,6 +4,7 @@ use super::cartesian3::Cartesian3;
 
 #[wasm_bindgen(module = "cesium")]
 extern "C" {
+    #[derive(Debug)]
     pub type Entity;
 
     #[wasm_bindgen(constructor)]

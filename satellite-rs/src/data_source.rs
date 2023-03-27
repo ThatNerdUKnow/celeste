@@ -1,8 +1,10 @@
+use std::collections::HashSet;
+
 use log::{debug, error, info, trace};
 use reqwest_wasm::Client;
 use wasm_bindgen::prelude::*;
 
-mod data_fetching;
+pub mod data_fetching;
 mod inheritance;
 
 use crate::{
@@ -15,7 +17,7 @@ use crate::{
 
 #[wasm_bindgen]
 pub struct SatelliteDataSource {
-    satellites: Option<Vec<Satellite>>,
+    satellites: Option<HashSet<Satellite>>,
     changed_event: Event,
     clock: DataSourceClock,
     clustering: EntityCluster,

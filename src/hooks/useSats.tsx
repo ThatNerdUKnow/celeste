@@ -16,6 +16,9 @@ export default function useSats() {
       .then(() => {
         console.log("Loaded Data");
         viewer?.dataSources.add(sats);
+      })
+      .catch(e=>{
+        console.error("JS: Got error when loading data:",e)
       });
 
     return sats;
