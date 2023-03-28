@@ -37,7 +37,7 @@ lazy_static = "1.4.0"
 reqwest-wasm = "0.11.16"
 itertools = "0.10.5"
 result-inspect = "0.2.0"
-web-sys = { version = "0.3.61", features = ["Window"] }
+web-sys = { version = "0.3.61", features = ["Window", "console"] }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.13"

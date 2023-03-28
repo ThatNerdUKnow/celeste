@@ -170,8 +170,6 @@ impl SatelliteDataSource {
         trace!("load_data: Generating requests");
         let requests: Vec<_> = CATEGORIES
             .iter()
-            // Important! remove later!
-            .take(1)
             .flat_map(|category| category.groups())
             .filter_map(|group: &Group| {
                 let request = builder

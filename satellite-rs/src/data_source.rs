@@ -2,6 +2,7 @@ use std::collections::HashSet;
 
 use log::{debug, error, info, trace};
 use wasm_bindgen::prelude::*;
+use web_sys::console;
 
 pub mod data_fetching;
 mod inheritance;
@@ -49,10 +50,12 @@ impl SatelliteDataSource {
 
     #[wasm_bindgen]
     pub fn update(&self, time: JulianDate) -> bool {
-        debug!("Update called");
-        trace!("Current Clock: {}", JulianDate::toIso8601(&time));
+        let date = JulianDate::toIso8601(&time);
+        trace!("Update called");
+        trace!("Current Clock: {}", date);
+        console::time_with_label(&date);
 
-        match &self.satellites {
+        let ready = match &self.satellites {
             Some(satellites) => {
                 for satellite in satellites {
                     match satellite.propogate(&time) {
@@ -63,7 +66,10 @@ impl SatelliteDataSource {
                 true
             }
             None => false,
-        }
+        };
+        console::time_end_with_label(&date);
+
+        ready
     }
 }
 
