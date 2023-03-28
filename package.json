@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "pack_wasm": "cd satellite-rs && wasm-pack build --release",
-    "predev": "npm run pack_wasm",
+    "prebuild": "cd satellite-rs && wasm-pack build --release",
+    "predev": "cd satellite-rs && wasm-pack build --dev",
     "dev": "vite",
-    "prebuild": "npm run pack_wasm",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

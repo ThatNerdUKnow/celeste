@@ -135,11 +135,11 @@ impl SatelliteDataSource {
         let satellites = elements
             .into_iter()
             .map(|(el, groups)| Satellite::new(el.into(), groups))
-            .collect::<error_stack::Result<HashSet<_>, Error>>();
+            .collect::<error_stack::Result<BTreeSet<_>, Error>>();
 
         match satellites {
             Ok(sats) => {
-                info!("Satellite collection has {} members",sats.len());
+                info!("Satellite collection has {} members", sats.len());
                 self.add_sats_to_entity_collection(sats);
             }
             Err(e) => error!("{e}"),
@@ -262,8 +262,8 @@ impl SatelliteDataSource {
         Ok(groups)
     }
 
-    fn add_sats_to_entity_collection(&mut self, sats: HashSet<Satellite>) {
-        let sats: HashSet<Satellite> = sats
+    fn add_sats_to_entity_collection(&mut self, sats: BTreeSet<Satellite>) {
+        let sats: BTreeSet<Satellite> = sats
             .into_iter()
             .map(|sat| {
                 EntityCollection::add(&self.entities, sat.entity());

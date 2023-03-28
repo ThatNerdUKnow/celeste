@@ -1,5 +1,7 @@
-use std::collections::HashSet;
+use std::{collections::{HashSet, BTreeSet}, str::FromStr};
 
+use chrono::NaiveDateTime;
+use error_stack::{IntoReport, ResultExt};
 use log::{debug, error, info, trace};
 use wasm_bindgen::prelude::*;
 use web_sys::console;
@@ -12,12 +14,13 @@ use crate::{
         data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
         entity_collection::EntityCollection, event::Event, julian_date::JulianDate,
     },
+    error::{adapter::ErrorStackAdapter, Error},
     satellite::Satellite,
 };
 
 #[wasm_bindgen]
 pub struct SatelliteDataSource {
-    satellites: Option<HashSet<Satellite>>,
+    satellites: Option<BTreeSet<Satellite>>,
     changed_event: Event,
     clock: DataSourceClock,
     clustering: EntityCluster,
@@ -49,16 +52,24 @@ impl SatelliteDataSource {
     }
 
     #[wasm_bindgen]
-    pub fn update(&self, time: JulianDate) -> bool {
-        let date = JulianDate::toIso8601(&time);
+    pub fn update(&self, date: JulianDate) -> Result<bool, ErrorStackAdapter> {
+        let iso8601 = JulianDate::toIso8601(&date);
         trace!("Update called");
-        trace!("Current Clock: {}", date);
-        console::time_with_label(&date);
+        trace!("Current Clock: {}", iso8601);
+        console::time_with_label(&iso8601);
+
+        let date = NaiveDateTime::parse_from_str(&iso8601, "%+")
+            .into_report()
+            .map_err(|e| {
+                error!("{e}");
+                e
+            })
+            .change_context(Error::Propogate)?;
 
         let ready = match &self.satellites {
             Some(satellites) => {
                 for satellite in satellites {
-                    match satellite.propogate(&time) {
+                    match satellite.propogate(&date) {
                         Ok(prediction) => satellite.update_entity(prediction),
                         Err(e) => error!("{e}"),
                     }
@@ -67,9 +78,9 @@ impl SatelliteDataSource {
             }
             None => false,
         };
-        console::time_end_with_label(&date);
+        console::time_end_with_label(&iso8601);
 
-        ready
+        Ok(ready)
     }
 }
 

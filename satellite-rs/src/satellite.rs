@@ -3,8 +3,8 @@ use error_stack::{IntoReport, ResultExt};
 use log::{debug, error, trace};
 use result_inspect::ResultInspectErr;
 use sgp4::{Elements, Prediction};
-use std::{collections::BTreeSet, convert::TryInto};
 use std::hash::Hash;
+use std::{collections::BTreeSet, convert::TryInto};
 
 use crate::{
     bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
@@ -25,17 +25,35 @@ impl Hash for Satellite {
         //self.entity.hash(state);
         self.elements.hash(state);
         //self.constants.hash(state);
-        self.categories.hash(state);
+        //self.categories.hash(state);
     }
 }
 
 impl PartialEq for Satellite {
     fn eq(&self, other: &Self) -> bool {
-        self.elements == other.elements && self.categories == other.categories
+        self.elements == other.elements
     }
 }
 
 impl Eq for Satellite {}
+
+impl PartialOrd for Satellite {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        self.elements
+            .as_ref()
+            .norad_id
+            .partial_cmp(&other.elements.as_ref().norad_id)
+    }
+}
+
+impl Ord for Satellite {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.elements
+            .as_ref()
+            .norad_id
+            .cmp(&other.elements.as_ref().norad_id)
+    }
+}
 
 impl Satellite {
     pub fn new(
@@ -59,13 +77,13 @@ impl Satellite {
     }
 
     /// Propogate satellite's position given [`JulianDate`] from cesium
-    pub fn propogate(&self, date: &JulianDate) -> error_stack::Result<Prediction, Error> {
-        let iso8601 = JulianDate::toIso8601(date);
+    pub fn propogate(&self, date: &NaiveDateTime) -> error_stack::Result<Prediction, Error> {
+        //let iso8601 = JulianDate::toIso8601(date);
 
-        let date = NaiveDateTime::parse_from_str(&iso8601, "%+")
-            .into_report()
-            .inspect_err(|e| error!("{e}"))
-            .change_context(Error::Propogate)?;
+        //let date = NaiveDateTime::parse_from_str(&iso8601, "%+")
+        //    .into_report()
+        //    .inspect_err(|e| error!("{e}"))
+        //    .change_context(Error::Propogate)?;
 
         let minutes = self
             .elements
