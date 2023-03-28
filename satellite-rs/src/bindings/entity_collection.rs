@@ -10,9 +10,9 @@ extern "C" {
     pub fn new() -> EntityCollection;
 
     #[wasm_bindgen(method)]
-    fn add(this: &EntityCollection, entity: &Entity) -> Entity;
+    pub fn add(this: &EntityCollection, entity: &Entity) -> Entity;
 
     #[wasm_bindgen(method)]
-    fn contains(this: &EntityCollection, entity: &Entity) -> bool;
+    pub fn contains(this: &EntityCollection, entity: &Entity) -> bool;
 
 }

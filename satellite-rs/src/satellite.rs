@@ -1,8 +1,9 @@
 use chrono::NaiveDateTime;
 use error_stack::{IntoReport, ResultExt};
-use log::debug;
+use log::{debug, error, trace};
+use result_inspect::ResultInspectErr;
 use sgp4::{Elements, Prediction};
-use std::collections::BTreeSet;
+use std::{collections::BTreeSet, convert::TryInto};
 use std::hash::Hash;
 
 use crate::{
@@ -41,7 +42,7 @@ impl Satellite {
         elements: Elements,
         categories: BTreeSet<&'static Group>,
     ) -> error_stack::Result<Satellite, Error> {
-        debug!("Creating new Satellite Data Source");
+        trace!("Creating new Satellite Data Source");
         let ent = Entity::new();
 
         let constants = sgp4::Constants::from_elements(&elements)
@@ -61,8 +62,9 @@ impl Satellite {
     pub fn propogate(&self, date: &JulianDate) -> error_stack::Result<Prediction, Error> {
         let iso8601 = JulianDate::toIso8601(date);
 
-        let date = NaiveDateTime::parse_from_str(&iso8601, "%Y-%m-%dT%H:%M:%SZ")
+        let date = NaiveDateTime::parse_from_str(&iso8601, "%+")
             .into_report()
+            .inspect_err(|e| error!("{e}"))
             .change_context(Error::Propogate)?;
 
         let minutes = self
@@ -84,5 +86,9 @@ impl Satellite {
         let coords = Cartesian3::fromElements(x, y, z);
 
         self.entity.set_position(coords);
+    }
+
+    pub fn entity(&self) -> &Entity {
+        &self.entity
     }
 }

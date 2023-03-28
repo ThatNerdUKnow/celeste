@@ -14,6 +14,7 @@ use error_stack::{IntoReport, Report, ResultExt};
 use web_sys::window;
 
 use crate::{
+    bindings::entity_collection::EntityCollection,
     data::{group::Group, static_data::CATEGORIES},
     data_source::{data_fetching::adapter::ElementsAdapter, SatelliteDataSource},
     error::{adapter::ErrorStackAdapter, Error, WrapSgp4Error},
@@ -121,6 +122,7 @@ impl SatelliteDataSource {
 
         let groups = SatelliteDataSource::execute_requests(requests, &client).await?;
 
+        info!("Processing Elements");
         let mut elements: HashMap<ElementsAdapter, BTreeSet<&'static Group>> = HashMap::new();
 
         groups.into_iter().for_each(|(group, els)| {
@@ -136,10 +138,14 @@ impl SatelliteDataSource {
             .collect::<error_stack::Result<HashSet<_>, Error>>();
 
         match satellites {
-            Ok(sats) => self.satellites = Some(sats),
+            Ok(sats) => {
+                info!("Satellite collection has {} members",sats.len());
+                self.add_sats_to_entity_collection(sats);
+            }
             Err(e) => error!("{e}"),
         }
-        todo!()
+
+        Ok(())
     }
     fn generate_requests(
         client: &Client,
@@ -164,6 +170,8 @@ impl SatelliteDataSource {
         trace!("load_data: Generating requests");
         let requests: Vec<_> = CATEGORIES
             .iter()
+            // Important! remove later!
+            .take(1)
             .flat_map(|category| category.groups())
             .filter_map(|group: &Group| {
                 let request = builder
@@ -253,10 +261,18 @@ impl SatelliteDataSource {
             groups.insert(group, elements);
         }
         info!("All groups fetched");
-        todo!()
+        Ok(groups)
     }
 
-    /*for l in rx.poll_recv(cx){
-
-    }*/
+    fn add_sats_to_entity_collection(&mut self, sats: HashSet<Satellite>) {
+        let sats: HashSet<Satellite> = sats
+            .into_iter()
+            .map(|sat| {
+                EntityCollection::add(&self.entities, sat.entity());
+                sat
+            })
+            .collect();
+        self.satellites = Some(sats);
+        self.is_loading = false;
+    }
 }

@@ -14,7 +14,7 @@ impl SatelliteDataSource {
         self.changed_event.clone()
     }
 
-    #[wasm_bindgen(getter)]
+    /*#[wasm_bindgen(getter)]
     pub fn clock(&self) -> JsValue {
         trace!("clock");
         self.clock.clone()
@@ -24,7 +24,7 @@ impl SatelliteDataSource {
     pub fn set_clock(&mut self, clock: DataSourceClock) {
         trace!("set_clock");
         self.clock = clock
-    }
+    }*/
 
     #[wasm_bindgen(getter)]
     pub fn clustering(&self) -> JsValue {

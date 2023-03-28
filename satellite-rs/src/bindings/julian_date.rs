@@ -12,4 +12,7 @@ extern "C" {
 
     #[wasm_bindgen(static_method_of=JulianDate)]
     pub fn secondsDifference(left: &JulianDate, right: &JulianDate) -> f64;
+
+    #[wasm_bindgen(method)]
+    pub fn getTimestamp(this: &JulianDate)->f64;
 }
