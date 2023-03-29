@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::*;
 
-use super::cartesian3::Cartesian3;
+use super::{cartesian3::Cartesian3, graphics::point_graphics::PointGraphics};
 
 #[wasm_bindgen(module = "cesium")]
 extern "C" {
@@ -18,4 +18,7 @@ extern "C" {
 
     #[wasm_bindgen(method, setter)]
     pub fn set_position(this: &Entity, val: Cartesian3);
+
+    #[wasm_bindgen(method, setter)]
+    pub fn set_point(this: &Entity, val: PointGraphics);
 }

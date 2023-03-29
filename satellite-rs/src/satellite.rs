@@ -6,6 +6,8 @@ use sgp4::{Elements, Prediction};
 use std::hash::Hash;
 use std::{collections::BTreeSet, convert::TryInto};
 
+use crate::bindings::graphics::color::Color;
+use crate::bindings::graphics::point_graphics::PointGraphics;
 use crate::{
     bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
     data::group::Group,
@@ -63,7 +65,13 @@ impl Satellite {
         trace!("Creating new Satellite Data Source");
         let ent = Entity::new();
         let position = Cartesian3::new();
+        let point = PointGraphics::new();
+        //let color = Color::new(1.0, 1.0, 1.0, 1.0);
+
+        //point.set_color(&color);
+
         ent.set_position(position);
+        ent.set_point(point);
 
         let constants = sgp4::Constants::from_elements(&elements)
             .to_sgp4_report()

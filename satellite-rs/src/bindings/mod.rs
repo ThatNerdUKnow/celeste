@@ -5,3 +5,4 @@ pub mod data_source_clock;
 pub mod event;
 pub mod entity_cluster;
 pub mod entity_collection;
+pub mod graphics;
