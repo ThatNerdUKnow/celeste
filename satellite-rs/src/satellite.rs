@@ -62,6 +62,8 @@ impl Satellite {
     ) -> error_stack::Result<Satellite, Error> {
         trace!("Creating new Satellite Data Source");
         let ent = Entity::new();
+        let position = Cartesian3::new();
+        ent.set_position(position);
 
         let constants = sgp4::Constants::from_elements(&elements)
             .to_sgp4_report()
@@ -88,7 +90,7 @@ impl Satellite {
         let minutes = self
             .elements
             .as_ref()
-            .minutes_since_epoch(&date)
+            .minutes_since_epoch(date)
             .to_sgp4_report()
             .change_context(Error::Propogate)?;
 
@@ -101,9 +103,14 @@ impl Satellite {
     pub fn update_entity(&self, prediction: Prediction) {
         let [x, y, z] = prediction.position;
 
-        let coords = Cartesian3::fromElements(x, y, z);
+        //let coords = Cartesian3::fromElements(x, y, z);
 
-        self.entity.set_position(coords);
+        //self.entity.set_position(coords);
+        let position = self.entity.position();
+
+        position.set_x(x);
+        position.set_y(y);
+        position.set_z(z);
     }
 
     pub fn entity(&self) -> &Entity {

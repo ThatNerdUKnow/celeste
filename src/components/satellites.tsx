@@ -1,4 +1,5 @@
 import { createCesiumComponent, useCesium } from "resium";
+import { Entity } from "cesium";
 import useSats from "../hooks/useSats";
 
 /*const SatelliteData = createCesiumComponent({

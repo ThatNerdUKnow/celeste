@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "prebuild": "cd satellite-rs && wasm-pack build --release",
-    "predev": "cd satellite-rs && wasm-pack build --dev",
+    "predev": "cd satellite-rs && wasm-pack build --release",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
