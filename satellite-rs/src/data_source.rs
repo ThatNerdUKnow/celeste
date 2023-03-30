@@ -1,8 +1,8 @@
-use std::{collections::{HashSet, BTreeSet}, str::FromStr};
+use std::collections::BTreeSet;
 
 use chrono::NaiveDateTime;
 use error_stack::{IntoReport, ResultExt};
-use log::{debug, error, info, trace};
+use log::{error, info, trace};
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 
@@ -11,7 +11,7 @@ mod inheritance;
 
 use crate::{
     bindings::{
-        data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
+        clock::data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
         entity_collection::EntityCollection, event::Event, julian_date::JulianDate,
     },
     error::{adapter::ErrorStackAdapter, Error},
