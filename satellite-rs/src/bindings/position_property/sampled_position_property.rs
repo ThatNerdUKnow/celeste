@@ -6,6 +6,8 @@ use self::{
     extrapolation_type::ExtrapolationType, interpolation_algorithm::InterpolationAlgorithm,
 };
 
+use super::reference_frame::ReferenceFrame;
+
 mod extrapolation_type;
 mod interpolation_algorithm;
 
@@ -13,6 +15,10 @@ mod interpolation_algorithm;
 extern "C" {
     #[wasm_bindgen(extends=PositionProperty)]
     pub type SampledPositionProperty;
+
+    #[wasm_bindgen(constructor)]
+    pub fn new(referenceFrame: ReferenceFrame, numberOfDerivatives: f64)
+        -> SampledPositionProperty;
 
     #[wasm_bindgen(method, getter)]
     pub fn backwardExtrapolationDuration(this: &SampledPositionProperty) -> f64;
