@@ -6,8 +6,11 @@ use sgp4::{Elements, Prediction};
 use std::hash::Hash;
 use std::{collections::BTreeSet, convert::TryInto};
 
+use crate::bindings::entity::EntityAdapter;
 use crate::bindings::graphics::color::Color;
 use crate::bindings::graphics::point_graphics::PointGraphics;
+use crate::bindings::position_property::reference_frame::ReferenceFrame;
+use crate::bindings::position_property::sampled_position_property::SampledPositionProperty;
 use crate::{
     bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
     data::group::Group,
@@ -16,7 +19,7 @@ use crate::{
 };
 
 pub struct Satellite {
-    entity: Entity,
+    entity: EntityAdapter<SampledPositionProperty>,
     elements: ElementsAdapter,
     constants: sgp4::Constants,
     categories: BTreeSet<&'static Group>,
@@ -64,14 +67,21 @@ impl Satellite {
     ) -> error_stack::Result<Satellite, Error> {
         trace!("Creating new Satellite Data Source");
         let ent = Entity::new();
-        let position = Cartesian3::new();
+        //let position = Cartesian3::new();
         let point = PointGraphics::new();
         //let color = Color::new(1.0, 1.0, 1.0, 1.0);
 
         //point.set_color(&color);
 
-        ent.set_position(position);
+        //ent.set_position(position);
         ent.set_point(point);
+
+        let position_prop = SampledPositionProperty::new(ReferenceFrame::INERTIAL, 0.0);
+
+        ent.set_position(position_prop.as_ref());
+
+        let entity_adapter: EntityAdapter<SampledPositionProperty> =
+            EntityAdapter::new(ent, position_prop);
 
         let constants = sgp4::Constants::from_elements(&elements)
             .to_sgp4_report()
@@ -79,7 +89,7 @@ impl Satellite {
             .change_context(Error::GetSats)?;
 
         Ok(Satellite {
-            entity: ent,
+            entity: entity_adapter,
             elements: elements.into(),
             constants,
             categories,
@@ -108,20 +118,24 @@ impl Satellite {
             .change_context(Error::Propogate)
     }
 
-    pub fn update_entity(&self, prediction: Prediction) {
-        let [x, y, z] = prediction.position;
+    pub fn update_entity(&self, date: &JulianDate, prediction: Prediction) {
+        let [x, y, z]: [f64; 3] = prediction
+            .position
+            .iter()
+            .map(|km| km * 1000.0)
+            .collect::<Vec<_>>()
+            .try_into()
+            .unwrap();
 
-        //let coords = Cartesian3::fromElements(x, y, z);
+        let coords = Cartesian3::fromElements(x, y, z);
 
         //self.entity.set_position(coords);
-        let position = self.entity.position();
+        let sampled_position: &SampledPositionProperty = self.entity.as_ref();
 
-        position.set_x(x);
-        position.set_y(y);
-        position.set_z(z);
+        sampled_position.addSample(date, coords, None);
     }
 
     pub fn entity(&self) -> &Entity {
-        &self.entity
+        &self.entity.as_ref()
     }
 }

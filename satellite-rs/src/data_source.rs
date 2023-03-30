@@ -52,8 +52,8 @@ impl SatelliteDataSource {
     }
 
     #[wasm_bindgen]
-    pub fn update(&self, date: JulianDate) -> Result<bool, ErrorStackAdapter> {
-        let iso8601 = JulianDate::toIso8601(&date);
+    pub fn update(&self, orig_date: JulianDate) -> Result<bool, ErrorStackAdapter> {
+        let iso8601 = JulianDate::toIso8601(&orig_date);
         trace!("Update called");
         trace!("Current Clock: {}", iso8601);
         console::time_with_label(&iso8601);
@@ -70,7 +70,7 @@ impl SatelliteDataSource {
             Some(satellites) => {
                 for satellite in satellites {
                     match satellite.propogate(&date) {
-                        Ok(prediction) => satellite.update_entity(prediction),
+                        Ok(prediction) => satellite.update_entity(&orig_date, prediction),
                         Err(e) => error!("{e}"),
                     }
                 }

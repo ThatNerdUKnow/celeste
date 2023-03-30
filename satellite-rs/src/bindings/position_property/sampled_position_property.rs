@@ -1,6 +1,7 @@
+use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
-use crate::bindings::position_property::PositionProperty;
+use crate::bindings::{julian_date::JulianDate, position_property::PositionProperty, cartesian3::Cartesian3};
 
 use self::{
     extrapolation_type::ExtrapolationType, interpolation_algorithm::InterpolationAlgorithm,
@@ -58,4 +59,12 @@ extern "C" {
 
     #[wasm_bindgen(method, setter)]
     pub fn set_numberOfDerivatives(this: &SampledPositionProperty, val: f64);
+
+    #[wasm_bindgen(method)]
+    pub fn addSample(
+        this: &SampledPositionProperty,
+        time: &JulianDate,
+        position: Cartesian3,
+        derivatives: Option<Array>,
+    );
 }
