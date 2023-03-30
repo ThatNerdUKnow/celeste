@@ -2,7 +2,9 @@ use wasm_bindgen::prelude::*;
 
 use crate::bindings::position_property::PositionProperty;
 
-use self::extrapolation_type::ExtrapolationType;
+use self::{
+    extrapolation_type::ExtrapolationType, interpolation_algorithm::InterpolationAlgorithm,
+};
 
 mod extrapolation_type;
 mod interpolation_algorithm;
@@ -35,4 +37,19 @@ extern "C" {
 
     #[wasm_bindgen(method, setter)]
     pub fn set_forwardExtrapolationType(this: &SampledPositionProperty, val: ExtrapolationType);
+
+    #[wasm_bindgen(method, getter)]
+    pub fn interpolationAlgorithm(this: &SampledPositionProperty) -> InterpolationAlgorithm;
+
+    #[wasm_bindgen(method, setter)]
+    pub fn set_interpolationAlgorithm(this: &SampledPositionProperty, val: &InterpolationAlgorithm);
+
+    #[wasm_bindgen(method, getter)]
+    pub fn interpolationDegree(this: &SampledPositionProperty) -> f64;
+
+    #[wasm_bindgen(method, getter)]
+    pub fn numberOfDerivatives(this: &SampledPositionProperty) -> f64;
+
+    #[wasm_bindgen(method, setter)]
+    pub fn set_numberOfDerivatives(this: &SampledPositionProperty, val: f64);
 }
