@@ -7,7 +7,7 @@ use super::{cartesian3::Cartesian3, julian_date::JulianDate, property::Property}
 pub mod reference_frame;
 pub mod sampled_position_property;
 
-#[wasm_bindgen]
+#[wasm_bindgen(module = "cesium")]
 extern "C" {
     #[wasm_bindgen(extends=Property)]
     pub type PositionProperty;
