@@ -1,4 +1,6 @@
 pub mod cartesian3;
+pub mod cartesian4;
+pub mod ellipsoid;
 pub mod clock;
 pub mod entity;
 pub mod entity_cluster;
@@ -8,3 +10,4 @@ pub mod graphics;
 pub mod julian_date;
 pub mod position_property;
 pub mod property;
+pub mod spherical;
