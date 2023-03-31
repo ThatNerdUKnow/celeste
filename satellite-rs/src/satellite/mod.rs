@@ -11,7 +11,7 @@ use crate::bindings::graphics::point_graphics::PointGraphics;
 use crate::bindings::position_property::reference_frame::ReferenceFrame;
 use crate::bindings::position_property::sampled_position_property::SampledPositionProperty;
 use crate::{
-    bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
+    bindings::{cartesian3::JSCartesian3, entity::Entity, julian_date::JulianDate},
     data::group::Group,
     data_source::data_fetching::adapter::ElementsAdapter,
     error::{Error, WrapSgp4Error},
@@ -142,7 +142,7 @@ impl Satellite {
             .try_into()
             .unwrap();
 
-        let coords = Cartesian3::fromElements(x, y, z);
+        let coords = JSCartesian3::fromElements(x, y, z);
 
         //self.entity.set_position(coords);
         let sampled_position: &SampledPositionProperty = self.entity.as_ref();

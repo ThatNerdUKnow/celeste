@@ -1,6 +1,6 @@
 use wasm_bindgen::prelude::wasm_bindgen;
 
-use crate::bindings::{cartesian3::Cartesian3, position_property::PositionProperty};
+use crate::bindings::{cartesian3::JSCartesian3, position_property::PositionProperty};
 
 use super::reference_frame::ReferenceFrame;
 
@@ -15,7 +15,7 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn setValue(
         this: &ConstantPositionProperty,
-        value: Cartesian3,
+        value: JSCartesian3,
         referenceFrame: ReferenceFrame,
     );
 }

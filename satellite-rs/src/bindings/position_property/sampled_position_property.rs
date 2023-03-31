@@ -1,7 +1,9 @@
 use js_sys::Array;
 use wasm_bindgen::prelude::*;
 
-use crate::bindings::{julian_date::JulianDate, position_property::PositionProperty, cartesian3::Cartesian3};
+use crate::bindings::{
+    cartesian3::JSCartesian3, julian_date::JulianDate, position_property::PositionProperty,
+};
 
 use self::{
     extrapolation_type::ExtrapolationType, interpolation_algorithm::InterpolationAlgorithm,
@@ -64,7 +66,7 @@ extern "C" {
     pub fn addSample(
         this: &SampledPositionProperty,
         time: &JulianDate,
-        position: Cartesian3,
+        position: JSCartesian3,
         derivatives: Option<Array>,
     );
 }

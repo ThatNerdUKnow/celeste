@@ -4,6 +4,7 @@ mod data_source;
 pub mod error;
 mod satellite;
 mod utils;
+pub mod adapter;
 
 use std::panic;
 
