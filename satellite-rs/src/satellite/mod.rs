@@ -7,7 +7,6 @@ use std::hash::Hash;
 use std::{collections::BTreeSet, convert::TryInto};
 
 use crate::bindings::entity::EntityAdapter;
-use crate::bindings::graphics::color::Color;
 use crate::bindings::graphics::point_graphics::PointGraphics;
 use crate::bindings::position_property::reference_frame::ReferenceFrame;
 use crate::bindings::position_property::sampled_position_property::SampledPositionProperty;
@@ -17,6 +16,10 @@ use crate::{
     data_source::data_fetching::adapter::ElementsAdapter,
     error::{Error, WrapSgp4Error},
 };
+
+use self::error::SatelliteError;
+
+pub mod error;
 
 pub struct Satellite {
     entity: EntityAdapter<SampledPositionProperty>,
@@ -64,8 +67,10 @@ impl Satellite {
     pub fn new(
         elements: Elements,
         categories: BTreeSet<&'static Group>,
-    ) -> error_stack::Result<Satellite, Error> {
+    ) -> error_stack::Result<Satellite, SatelliteError> {
         trace!("Creating new Satellite Data Source");
+
+        let elements_adapter: ElementsAdapter = elements.into();
         let ent = Entity::new();
         //let position = Cartesian3::new();
         let point = PointGraphics::new();
@@ -83,21 +88,25 @@ impl Satellite {
         let entity_adapter: EntityAdapter<SampledPositionProperty> =
             EntityAdapter::new(ent, position_prop);
 
-        let constants = sgp4::Constants::from_elements(&elements)
+        let constants = sgp4::Constants::from_elements(elements_adapter.as_ref())
             .to_sgp4_report()
             .attach_printable("Creating constants for satellite")
-            .change_context(Error::GetSats)?;
+            .attach_printable(format!("{elements_adapter:#?}"))
+            .change_context(SatelliteError::CreateSatellite)?;
 
         Ok(Satellite {
             entity: entity_adapter,
-            elements: elements.into(),
+            elements: elements_adapter,
             constants,
             categories,
         })
     }
 
     /// Propogate satellite's position given [`JulianDate`] from cesium
-    pub fn propogate(&self, date: &NaiveDateTime) -> error_stack::Result<Prediction, Error> {
+    pub fn propogate(
+        &self,
+        date: &NaiveDateTime,
+    ) -> error_stack::Result<Prediction, SatelliteError> {
         //let iso8601 = JulianDate::toIso8601(date);
 
         //let date = NaiveDateTime::parse_from_str(&iso8601, "%+")
@@ -110,12 +119,18 @@ impl Satellite {
             .as_ref()
             .minutes_since_epoch(date)
             .to_sgp4_report()
-            .change_context(Error::Propogate)?;
+            .change_context(SatelliteError::Propogate(
+                format!("{:#?}", self.elements),
+                *date,
+            ))?;
 
         self.constants
             .propagate(minutes)
             .to_sgp4_report()
-            .change_context(Error::Propogate)
+            .change_context(SatelliteError::Propogate(
+                format!("{:#?}", self.elements),
+                *date,
+            ))
     }
 
     pub fn update_entity(&self, date: &JulianDate, prediction: Prediction) {

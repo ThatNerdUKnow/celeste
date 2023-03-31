@@ -18,7 +18,7 @@ use crate::{
     data::{group::Group, static_data::CATEGORIES},
     data_source::{data_fetching::adapter::ElementsAdapter, SatelliteDataSource},
     error::{adapter::ErrorStackAdapter, Error, WrapSgp4Error},
-    satellite::Satellite,
+    satellite::{error::SatelliteError, Satellite},
 };
 
 pub mod adapter;
@@ -135,7 +135,7 @@ impl SatelliteDataSource {
         let satellites = elements
             .into_iter()
             .map(|(el, groups)| Satellite::new(el.into(), groups))
-            .collect::<error_stack::Result<BTreeSet<_>, Error>>();
+            .collect::<error_stack::Result<BTreeSet<_>, SatelliteError>>();
 
         match satellites {
             Ok(sats) => {

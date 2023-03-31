@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
+use std::rc::Rc;
 
 use sgp4::Elements;
 
@@ -39,6 +40,7 @@ impl Debug for ElementsAdapter {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_tuple("ElementsAdapter")
             .field(&self.0.object_name)
+            .field(&self.0.norad_id)
             .finish()
     }
 }
