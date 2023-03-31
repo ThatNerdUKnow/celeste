@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Error, Debug)]
 #[wasm_bindgen]
-#[error("{0}")]
+#[error("{0:#?}")]
 pub struct ErrorStackAdapter(Report<super::Error>);
 
 impl From<Report<super::Error>> for ErrorStackAdapter {

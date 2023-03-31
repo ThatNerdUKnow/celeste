@@ -1,9 +1,8 @@
 use wasm_bindgen::prelude::*;
 
 use super::{
-    cartesian3::Cartesian3,
-    graphics::point_graphics::PointGraphics,
-    position_property::{self, PositionProperty},
+    cartesian3::Cartesian3, graphics::point_graphics::PointGraphics,
+    position_property::PositionProperty,
 };
 
 #[wasm_bindgen(module = "cesium")]

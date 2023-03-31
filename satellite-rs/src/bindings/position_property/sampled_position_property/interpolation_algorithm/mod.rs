@@ -1,9 +1,9 @@
-use js_sys::{Array, Number};
+use js_sys::Array;
 use wasm_bindgen::prelude::wasm_bindgen;
 
+pub mod hermite_polynomial_approximation;
 pub mod lagrange_polynomical_approximation;
 pub mod linear_approximation;
-pub mod hermite_polynomial_approximation;
 
 #[wasm_bindgen(module = "cesium")]
 extern "C" {

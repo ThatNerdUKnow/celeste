@@ -26,7 +26,7 @@ impl<T> WrapSgp4Error<T> for Result<T, sgp4::Error> {
     fn to_sgp4_report(self) -> error_stack::Result<T, Sgp4Error> {
         self.map_err(|e| {
             let binding: Sgp4Error = e.into();
-            error!("{binding}");
+            error!("{binding:#?}");
             binding
         })
         .into_report()
