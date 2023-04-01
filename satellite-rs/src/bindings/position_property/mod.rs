@@ -2,7 +2,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::bindings::position_property::reference_frame::ReferenceFrame;
 
-use super::{cartesian3::JSCartesian3, julian_date::JulianDate, property::Property};
+use super::{cartesian3::Cartesian3, julian_date::JulianDate, property::Property};
 
 pub mod composite_position_property;
 pub mod constant_position_property;
@@ -25,6 +25,6 @@ extern "C" {
         this: &PositionProperty,
         time: &JulianDate,
         referenceFrame: ReferenceFrame,
-        result: &JSCartesian3,
-    ) -> Option<JSCartesian3>;
+        result: &Cartesian3,
+    ) -> Option<Cartesian3>;
 }
