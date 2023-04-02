@@ -11,8 +11,11 @@ mod inheritance;
 
 use crate::{
     bindings::{
-        clock::data_source_clock::DataSourceClock, entity_cluster::EntityCluster,
-        entity_collection::EntityCollection, event::Event, julian_date::JulianDate,
+        clock::{clock_step::ClockStep, data_source_clock::DataSourceClock},
+        entity_cluster::EntityCluster,
+        entity_collection::EntityCollection,
+        event::Event,
+        julian_date::JulianDate,
     },
     error::{adapter::ErrorStackAdapter, Error},
     satellite::Satellite,
@@ -35,12 +38,13 @@ pub struct SatelliteDataSource {
 #[wasm_bindgen]
 impl SatelliteDataSource {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> SatelliteDataSource {
+    pub fn new(clock: DataSourceClock) -> SatelliteDataSource {
         info!("Creating Satellite data source");
+
         SatelliteDataSource {
             satellites: None,
             changed_event: Event::new(),
-            clock: DataSourceClock::new(),
+            clock,
             clustering: EntityCluster::new(),
             entities: EntityCollection::new(),
             error_event: Event::new(),
@@ -81,11 +85,5 @@ impl SatelliteDataSource {
         console::time_end_with_label(&iso8601);
 
         Ok(ready)
-    }
-}
-
-impl Default for SatelliteDataSource {
-    fn default() -> Self {
-        SatelliteDataSource::new()
     }
 }

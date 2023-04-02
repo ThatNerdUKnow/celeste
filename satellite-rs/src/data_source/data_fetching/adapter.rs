@@ -1,7 +1,6 @@
 use std::collections::BTreeSet;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
-use std::rc::Rc;
 
 use sgp4::Elements;
 

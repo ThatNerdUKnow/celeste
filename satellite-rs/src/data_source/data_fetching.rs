@@ -4,7 +4,7 @@ use std::{
 };
 
 use itertools::Itertools;
-use log::{debug, error, info, trace};
+use log::{error, info, trace};
 use reqwest_wasm::{Client, Request, Url};
 use result_inspect::ResultInspect;
 use sgp4::Elements;

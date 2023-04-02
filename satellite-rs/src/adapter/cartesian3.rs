@@ -1,4 +1,4 @@
-use std::{clone, fmt::Display};
+use std::fmt::Display;
 
 use log::error;
 use wasm_bindgen::prelude::*;

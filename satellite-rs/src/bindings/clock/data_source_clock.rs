@@ -54,8 +54,8 @@ extern "C" {
     #[wasm_bindgen(method, setter)]
     pub fn set_stopTime(this: &DataSourceClock, val: &JulianDate);
 
-    #[wasm_bindgen(method)]
-    pub fn clone(result: &DataSourceClock) -> DataSourceClock;
+    #[wasm_bindgen(method, js_name = "clone")]
+    pub fn clone_js(result: &DataSourceClock) -> DataSourceClock;
 
     #[wasm_bindgen(method)]
     pub fn equals(other: &DataSourceClock) -> bool;

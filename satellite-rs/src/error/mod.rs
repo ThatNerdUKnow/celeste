@@ -1,5 +1,3 @@
-use std::fmt::Display;
-
 use error_stack::IntoReport;
 use log::error;
 use thiserror::Error;

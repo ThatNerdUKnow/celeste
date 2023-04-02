@@ -1,12 +1,12 @@
 use chrono::NaiveDateTime;
-use error_stack::{IntoReport, ResultExt};
-use log::{debug, error, trace};
-use result_inspect::ResultInspectErr;
+use error_stack::ResultExt;
+use log::trace;
 use sgp4::{Elements, Prediction};
 use std::hash::Hash;
 use std::{collections::BTreeSet, convert::TryInto};
 
 use crate::bindings::entity::EntityAdapter;
+use crate::bindings::graphics::color::Color;
 use crate::bindings::graphics::point_graphics::PointGraphics;
 use crate::bindings::position_property::reference_frame::ReferenceFrame;
 use crate::bindings::position_property::sampled_position_property::SampledPositionProperty;
@@ -14,7 +14,7 @@ use crate::{
     bindings::{cartesian3::Cartesian3, entity::Entity, julian_date::JulianDate},
     data::group::Group,
     data_source::data_fetching::adapter::ElementsAdapter,
-    error::{Error, WrapSgp4Error},
+    error::WrapSgp4Error,
 };
 
 use self::error::SatelliteError;
@@ -74,7 +74,10 @@ impl Satellite {
         let ent = Entity::new();
         //let position = Cartesian3::new();
         let point = PointGraphics::new();
-        //let color = Color::new(1.0, 1.0, 1.0, 1.0);
+        //let scalar = NearFarScalar::new(1000.0, 1.0, 10000.0, 0.3);
+        //point.set_translucency_by_distance(scalar);
+        let color = Color::new(0.0, 1.0, 0.0, 1.0);
+        point.set_color(&color);
 
         //point.set_color(&color);
 
@@ -151,6 +154,6 @@ impl Satellite {
     }
 
     pub fn entity(&self) -> &Entity {
-        &self.entity.as_ref()
+        self.entity.as_ref()
     }
 }

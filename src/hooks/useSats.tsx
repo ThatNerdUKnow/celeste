@@ -4,12 +4,17 @@ import { SAT_CATEGORIES } from "../constants/groupDefs";
 import { SatelliteDataSource } from "satellite-rs";
 import { chunk } from "lodash";
 import { useCesium } from "resium";
+import { ClockStep, DataSourceClock, JulianDate } from "cesium";
 
 export default function useSats() {
   let { viewer } = useCesium();
 
   let satellites = useMemo(() => {
-    let sats = new SatelliteDataSource();
+    let clock = new DataSourceClock();
+    clock.clockStep = ClockStep.SYSTEM_CLOCK_MULTIPLIER;
+    clock.multiplier = 1.0;
+    clock.currentTime = JulianDate.fromDate(new Date());
+    let sats = new SatelliteDataSource(clock);
     console.log("Within Hook", sats);
     sats
       .load_data()
@@ -17,8 +22,8 @@ export default function useSats() {
         console.log("Loaded Data");
         viewer?.dataSources.add(sats);
       })
-      .catch(e=>{
-        console.error("JS: Got error when loading data:",e)
+      .catch((e) => {
+        console.error("JS: Got error when loading data:", e);
       });
 
     return sats;
